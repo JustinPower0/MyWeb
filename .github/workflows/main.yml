@@ -1,24 +1,19 @@
 name: Docker + Ngrok v3 Demo
-
 on:
   workflow_dispatch:
   push:
     branches:
       - main
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
       # 1️⃣ Checkout del código
       - name: Checkout repository
         uses: actions/checkout@v4
-
       # 2️⃣ Construir y levantar contenedores con Docker Compose
       - name: Run Docker containers
         run: docker compose up -d
-
       # 3️⃣ Instalar Ngrok v3
       - name: Install Ngrok v3
         run: |
@@ -27,11 +22,9 @@ jobs:
           sudo mv ngrok /usr/local/bin/
           sudo chmod +x /usr/local/bin/ngrok
           ngrok version
-
       # 4️⃣ Autenticar Ngrok
       - name: Authenticate Ngrok
         run: ngrok config add-authtoken ${{ secrets.NGROK_AUTHTOKEN }}
-
       # 5️⃣ Lanzar túnel Ngrok y capturar la URL pública
       - name: Start Ngrok tunnel
         id: ngrok
@@ -39,10 +32,8 @@ jobs:
           # Lanzar Ngrok en background
           ngrok http 8080 --log=stdout > ngrok.log &
           NGROK_PID=$!
-
           # Esperar que Ngrok arranque
           sleep 5
-
           # Obtener URL pública
           NGROK_URL=$(curl --silent http://127.0.0.1:4040/api/tunnels | \
                        grep -oP '"public_url":"\Khttps://[^"]+')
@@ -52,7 +43,6 @@ jobs:
 
           # Mantener el túnel activo hasta que termine el workflow
           wait $NGROK_PID
-
       # 6️⃣ Detener contenedores Docker al final
       - name: Stop Docker containers
         if: always()
