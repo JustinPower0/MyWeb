@@ -40,7 +40,6 @@ jobs:
           echo "NGROK_URL=$NGROK_URL" >> $GITHUB_ENV
           echo "🌐 Web accesible en: $NGROK_URL"
           echo "::notice title=URL pública::$NGROK_URL"
-
           # Mantener el túnel activo hasta que termine el workflow
           wait $NGROK_PID
       # 6️⃣ Detener contenedores Docker al final
